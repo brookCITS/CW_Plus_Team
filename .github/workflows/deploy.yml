@@ -21,15 +21,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Create .env file
-        run: |
-          echo "REACT_APP_BLOGGER_API_KEY=${{ secrets.REACT_APP_BLOGGER_API_KEY }}" > .env
-          echo "REACT_APP_BLOGGER_BLOG_ID=${{ secrets.REACT_APP_BLOGGER_BLOG_ID }}" >> .env
-          echo "REACT_APP_BLOGGER_BASE_URL=${{ secrets.REACT_APP_BLOGGER_BASE_URL }}" >> .env
-          echo "REACT_APP_BLOGGER_ABOUT_PAGE_ID=${{ secrets.REACT_APP_BLOGGER_ABOUT_PAGE_ID }}" >> .env
-          # Add this to verify in logs (remove after debugging)
-          head -n 4 .env | sed 's/./*/g'
-
       - name: Build React App
         run: CI=false npm run build
 
