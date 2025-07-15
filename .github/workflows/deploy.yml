@@ -15,13 +15,30 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: 18
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build React app
-        run: npm run build
+      - name: Create .env file
+        run: |
+          echo "REACT_APP_BLOGGER_API_KEY=${{ secrets.REACT_APP_BLOGGER_API_KEY }}" > .env
+          echo "REACT_APP_BLOGGER_BLOG_ID=${{ secrets.REACT_APP_BLOGGER_BLOG_ID }}" >> .env
+          echo "REACT_APP_BLOGGER_BASE_URL=${{ secrets.REACT_APP_BLOGGER_BASE_URL }}" >> .env
+          echo "REACT_APP_BLOGGER_ABOUT_PAGE_ID=${{ secrets.REACT_APP_BLOGGER_ABOUT_PAGE_ID }}" >> .env
+          # Add this to verify in logs (remove after debugging)
+          head -n 4 .env | sed 's/./*/g'
+
+      - name: Build React App
+        run: CI=false npm run build
+
+      - name: Verify Build Directory
+        run: |
+          if [ ! -d "build" ]; then 
+            echo "Build directory can not be found! Build process may have failed.";
+            exit 1;
+          fi
 
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@v0.5.1
